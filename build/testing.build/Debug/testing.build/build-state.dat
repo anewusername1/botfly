@@ -1,0 +1,63 @@
+Ttesting
+v7
+r0
+t353126203.951597
+cCheck dependencies
+c<C0003:'CompileC main.o':P8:W0>
+
+N/Developer/SDKs/MacOSX10.6.sdk
+c000000004BF4701900000000000000EE
+t1274310681
+s238
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdio.h
+c000000004AC59C820000000000004174
+t1254464642
+s16756
+
+N/Users/moneydesktop/Development/testing/build/Debug/testing
+t2
+s0
+
+N/Users/moneydesktop/Development/testing/build/testing.build/Debug/testing.build/Objects-normal/x86_64/main.o
+t2
+s0
+
+N/Users/moneydesktop/Development/testing/build/testing.build/Debug/testing.build/Objects-normal/x86_64/main.s
+t1331433403
+s7677
+
+N/Users/moneydesktop/Development/testing/build/testing.build/Debug/testing.build/Objects-normal/x86_64/testing.LinkFileList
+c000000004F5C0F7F000000000000006D
+t1331433343
+s109
+
+N/Users/moneydesktop/Development/testing/main.c
+c000000004F5C0FB500000000000000C2
+t1331433397
+s194
+i<stdio.h>
+
+C<C0003:'CompileC main.o':P8:W0>
+s353126203.930402
+e353126203.951550
+r1
+xCompileC
+xbuild/testing.build/Debug/testing.build/Objects-normal/x86_64/main.o
+x/Users/moneydesktop/Development/testing/main.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@54"Compile /Users/moneydesktop/Development/testing/main.c353126203#353126203#0(0"0(0#0#46"/Users/moneydesktop/Development/testing/main.c3401403401131030528#1281"    cd /Users/moneydesktop/Development/testing    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/moneydesktop/Development/testing/build/testing.build/Debug/testing.build/testing-generated-files.hmap -I/Users/moneydesktop/Development/testing/build/testing.build/Debug/testing.build/testing-own-target-headers.hmap -I/Users/moneydesktop/Development/testing/build/testing.build/Debug/testing.build/testing-all-target-headers.hmap -iquote /Users/moneydesktop/Development/testing/build/testing.build/Debug/testing.build/testing-project-headers.hmap -F/Users/moneydesktop/Development/testing/build/Debug -I/Users/moneydesktop/Development/testing/build/Debug/include -I/Users/moneydesktop/Development/testing/build/testing.build/Debug/testing.build/DerivedSources/x86_64 -I/Users/moneydesktop/Development/testing/build/testing.build/Debug/testing.build/DerivedSources -S /Users/moneydesktop/Development/testing/main.c -o /Users/moneydesktop/Development/testing/build/testing.build/Debug/testing.build/Objects-normal/x86_64/main.s0#
+
+CCheck dependencies
+r0
+lSLF07#2@18"Check dependencies353126203#353126203#0(0"0(0#1#0"8613610848#0"0#
+
+CCompileC build/testing.build/Debug/testing.build/Objects-normal/x86_64/main.o /Users/moneydesktop/Development/testing/main.c normal x86_64 c com.apple.compilers.gcc.4_2
+r0
+
+CLd /Users/moneydesktop/Development/testing/build/Debug/testing normal x86_64
+r0
+
