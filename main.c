@@ -20,7 +20,7 @@
 #include <unistd.h>
 
 /***********************
- * argv[1] -> host
+ * argv[1] -> server
  * argv[2] -> port
  * argv[3] -> chan
  * argv[4] -> nick
@@ -29,23 +29,21 @@
 
 
 int main(int argc, char **argv){
-  if(argc < 5)
+  if(argc < 2)
     usage();
 
   int ch;
-  const char *host, *port, *chan, *nick, *user;
+  const char *server, *port, *chan, *nick, *user;
   port = "6667";
+  nick = "botfly";
+  user = "botfly";
+  server = argv[1];
+  chan = argv[2];
 
-  while((ch = getopt(argc, argv, "s:p:c:n:i:")) != -1){
+  while((ch = getopt(argc, argv, "p:n:i:")) != -1){
     switch(ch){
-      case 's':
-        host = optarg;
-        break;
       case 'p':
         port = optarg;
-        break;
-      case 'c':
-        chan = optarg;
         break;
       case 'n':
         nick = optarg;
@@ -71,7 +69,7 @@ int main(int argc, char **argv){
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
 
-  if((status=getaddrinfo(host,port,&hints,&serv))<0)
+  if((status=getaddrinfo(server,port,&hints,&serv))<0)
     die("getaddrinfo",status);
   if((sfd=socket(serv->ai_family,serv->ai_socktype,serv->ai_protocol))<0)
     die("socket",sfd);
@@ -106,7 +104,7 @@ int main(int argc, char **argv){
 }
 
 void usage(){
-  puts("botfly -s <host> -p <port> -c <chan> -n <nick> -i <identity>");
+  puts("botfly <server> <chan> -p [port] -n <nick> -i <identity>");
   exit(1);
 }
 
@@ -116,7 +114,7 @@ void die(const char *msg, int err){
 }
 
 void parse_data(char *buff,struct irc_data **fat){
-  if(sscanf(buff,":%[^!]!%[^@]@%[^ ] %*[^ ] %[^ :] :%[^\r\n]",(*fat)->nick,(*fat)->user,(*fat)->host,(*fat)->chan,(*fat)->message) == 5){
+  if(sscanf(buff,":%[^!]!%[^@]@%[^ ] %*[^ ] %[^ :] :%[^\r\n]",(*fat)->nick,(*fat)->user,(*fat)->server,(*fat)->chan,(*fat)->message) == 5){
     (*fat)->is_ready = 1;
     if((*fat)->chan[0] != '#') strcpy((*fat)->chan,(*fat)->nick);
   } else (*fat)->is_ready = 0;
