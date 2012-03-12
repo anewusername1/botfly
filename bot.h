@@ -1,14 +1,8 @@
-/*
- *  bot.h
- *  testing
- *
- *  Created by MoneyDesktop on 3/10/12.
- *  Copyright 2012 __MyCompanyName__. All rights reserved.
- *
- */
+#ifndef BOT_H
+#define BOT_H
 
+#include <stdlib.h>
 #define BUFSIZE 512
-#define PSYCHO  NULL
 
 struct irc_data {
     char nick[32];
@@ -23,3 +17,4 @@ void die(const char*,int);
 void parse_data(char*,struct irc_data**);
 int  sayc(int,const char*,const char*, ...);
 void usage();
+#endif
