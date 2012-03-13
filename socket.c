@@ -53,8 +53,7 @@ int sck_send(int s, const char* data, size_t size)
    size_t written = 0;
    int rc;
 
-   while ( written < size )
-   {
+   while ( written < size ){
       rc = send(s, data + written, size - written, 0);
       if ( rc <= 0 )
          return -1;
