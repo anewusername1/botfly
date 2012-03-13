@@ -161,24 +161,8 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
    }
    else if ( strcmp(command, "smack") == 0 )
    {
-      char mesg[512];
-      srand(time(NULL));
-      int critical;
-      critical = (rand()%10)/8;
-
-      if ( arg != NULL && strlen(arg) > 0 )
-      {
-         if ( critical )
-            snprintf(mesg, 511, "I smack thee, %s, for %d damage (it's super effective).", arg, rand()%20 + 21);
-         else
-            snprintf(mesg, 511, "I smack thee, %s, for %d damage.", arg, rand()%20 + 1);
-         mesg[511] = '\0';
-      }
-      else
-      {
-         snprintf(mesg, 511, "Behold, I smack thee, %s, for %d damage.", irc_nick, rand()%20 + 1);
-         mesg[511] = '\0';
-      }
+     char mesg[512];
+     strncpy(mesg, smack(*arg), 512);
       if ( irc_msg(irc->s, irc->channel, mesg) < 0 )
          return -1;
    }
@@ -232,4 +216,26 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
    }
 
    return 0;
+}
+
+int smack(char *arg){
+  char mesg[512];
+  srand(time(NULL));
+  int critical;
+  critical = (rand()%10)/8;
+
+  if ( arg != NULL && strlen(arg) > 0 )
+  {
+     if ( critical )
+        snprintf(mesg, 511, "I smack thee, %s, for %d damage (it's super effective).", arg, rand()%20 + 21);
+     else
+        snprintf(mesg, 511, "I smack thee, %s, for %d damage.", arg, rand()%20 + 1);
+     mesg[511] = '\0';
+  }
+  else
+  {
+     snprintf(mesg, 511, "Behold, I smack thee, %s, for %d damage.", irc_nick, rand()%20 + 1);
+     mesg[511] = '\0';
+  }
+  return *mesg;
 }
