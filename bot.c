@@ -118,7 +118,8 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
   if ( *msg != '.' )
     return 0;
 
-  const char *message;
+  int buffer_size = 512;
+  char message[buffer_size];
   char *command;
   char *arg;
   int retval;
@@ -133,17 +134,11 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
     return 0;
 
   if(strcmp(command, "ping") == 0)
-  {
-    message = "pong";
-  }
+    snprintf(message, buffer_size, "pong");
   else if(strcmp(command, "smack") == 0)
-  {
-    smack(&message, arg, 511);
-  }
+    smack(message, arg, buffer_size);
   else if(strcmp(command, "google") == 0)
-  {
-    google(&message, arg, 512);
-  }
+    google(message, arg, buffer_size);
 
   if(irc_msg(irc->s, irc->channel, message) < 0)
     return -1;
