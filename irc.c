@@ -94,3 +94,8 @@ int irc_action(int s, const char *channel, const char *data){
 int irc_msg(int s, const char *channel, const char *data){
   return sck_sendf(s, "PRIVMSG %s :%s\r\n", channel, data);
 }
+
+// irc_me: sends ME command
+int irc_me(int s, const char *channel, const char *data){
+  return sck_sendf(s, "ME %s :%s\r\n", channel, data);
+}
