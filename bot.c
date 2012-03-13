@@ -1,86 +1,235 @@
 #include "bot.h"
-
-#include <netdb.h>
+#include "socket.h"
 #include <string.h>
-#include <arpa/inet.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <unistd.h>
+#include <time.h>
 
-/***********************
- * argv[1] -> server
- * argv[2] -> port
- * argv[3] -> chan
- * argv[4] -> nick
- * argv[5] -> user
- ***********************/
-
-
-int main(int argc, char **argv){
-
-  char buff[BUFSIZE], ip[INET_ADDRSTRLEN];
-  int sfd,status,sent,recvd,i;
-  struct addrinfo hints,*serv;
-  struct sockaddr_in *sip;
-  struct irc_data *irc = malloc(sizeof(struct irc_data));
-
-  memset(&hints,0,sizeof(hints));
-  hints.ai_family = AF_INET;
-  hints.ai_socktype = SOCK_STREAM;
-
-  if((status=getaddrinfo(server,port,&hints,&serv))<0)
-    die("getaddrinfo",status);
-  if((sfd=socket(serv->ai_family,serv->ai_socktype,serv->ai_protocol))<0)
-    die("socket",sfd);
-  if((status=connect(sfd,serv->ai_addr,serv->ai_addrlen))<0)
-    die("connect",status);
-
-  sip = (struct sockaddr_in*)serv->ai_addr;
-  inet_ntop(serv->ai_family,&sip->sin_addr,ip,sizeof(ip));
-
-  snprintf(buff,BUFSIZE,"USER %s 8 * :\x50\x73\x79\x63\x68\x6F\x20\x42\x6F\x74\r\nNICK %s\r\nJOIN #%s\r\n",user,nick,chan);
-  if((sent=send(sfd,buff,strlen(buff),0))<0)
-    die("send",sent);
-
-  while((recvd=recv(sfd,buff,BUFSIZE-1,0))>=0){
-    buff[recvd-1]=0;
-    puts(buff);
-    parse_data(buff,&irc);
-    if(irc->is_ready)
-      if(strstr(irc->message,nick) != NULL)
-        sayc(sfd,irc->chan,"sup %s",irc->nick);
-    if(sscanf(buff,"PING :%s",buff)==1){
-      snprintf(buff,BUFSIZE,"PONG :%s",buff);
-      if(send(sfd,buff,strlen(buff),0)>0)
-          puts("PONG!");
-      else puts("PONG failed...just sayin");
-    }
-
-  }
-  free(irc);
-  close(sfd);
-  freeaddrinfo(serv);
-}
-
-void die(const char *msg, int err){
-  fprintf(stderr,"%s: %s\n",msg,gai_strerror(err));
+void usage(){
+  puts("botfly <server> <chan> -p [port] -n <nick> -i <identity> -f <output file>");
   exit(1);
 }
 
-void parse_data(char *buff,struct irc_data **fat){
-  if(sscanf(buff,":%[^!]!%[^@]@%[^ ] %*[^ ] %[^ :] :%[^\r\n]",(*fat)->nick,(*fat)->user,(*fat)->server,(*fat)->chan,(*fat)->message) == 5){
-    (*fat)->is_ready = 1;
-    if((*fat)->chan[0] != '#') strcpy((*fat)->chan,(*fat)->nick);
-  } else (*fat)->is_ready = 0;
+int irc_handle_data(irc_t *irc)
+{
+   char tempbuffer[512];
+   int rc, i;
+
+   if ( (rc = sck_recv(irc->s, tempbuffer, sizeof(tempbuffer) - 2 ) ) <= 0 )
+   {
+      fprintf(stderr, ":v\n");
+      return -1;
+   }
+
+   tempbuffer[rc] = '\0';
+
+   for ( i = 0; i < rc; ++i )
+   {
+      switch (tempbuffer[i])
+      {
+         case '\r':
+         case '\n':
+         {
+            irc->servbuf[irc->bufptr] = '\0';
+            irc->bufptr = 0;
+
+            if ( irc_parse_action(irc) < 0 )
+               return -1;
+
+            break;
+         }
+
+         default:
+         {
+            irc->servbuf[irc->bufptr] = tempbuffer[i];
+            if ( irc->bufptr >= (sizeof ( irc->servbuf ) -1 ) )
+               // Overflow!
+               ;
+            else
+               irc->bufptr++;
+         }
+      }
+   }
+   return 0;
 }
 
-int sayc(int sockfd, const char *chan, const char *fmt, ...){
-  char msg[BUFSIZE], k[BUFSIZE];    //need to change sizes..do it later
-  va_list list;
-  va_start(list,fmt);
-  vsnprintf(k,BUFSIZE,fmt,list);
-  snprintf(msg,BUFSIZE,"PRIVMSG %s :%s\r\n",chan,k); //potential problem with \r\n being truncated if string is too large..do it later
-  va_end(list);
-  return send(sockfd,msg,strlen(msg),0);
+int irc_parse_action(irc_t *irc)
+{
+
+   char irc_nick[128];
+   char irc_msg[512];
+
+
+   if ( strncmp(irc->servbuf, "PING :", 6) == 0 )
+   {
+      return irc_pong(irc->s, &irc->servbuf[6]);
+   }
+   else if ( strncmp(irc->servbuf, "NOTICE AUTH :", 13) == 0 )
+   {
+      // Don't care
+      return 0;
+   }
+   else if ( strncmp(irc->servbuf, "ERROR :", 7) == 0 )
+   {
+      // Still don't care
+      return 0;
+   }
+
+   // Here be lvl. 42 dragonn boss
+   // Parses IRC message that pulls out nick and message.
+   else
+   {
+      char *ptr;
+      int privmsg = 0;
+      char irc_nick[128];
+      char irc_msg[512];
+      *irc_nick = '\0';
+      *irc_msg = '\0';
+
+      // Checks if we have non-message string
+      if ( strchr(irc->servbuf, 1) != NULL )
+         return 0;
+
+      if ( irc->servbuf[0] == ':' )
+      {
+         ptr = strtok(irc->servbuf, "!");
+         if ( ptr == NULL )
+         {
+            printf("ptr == NULL\n");
+            return 0;
+         }
+         else
+         {
+            strncpy(irc_nick, &ptr[1], 127);
+            irc_nick[127] = '\0';
+         }
+
+         while ( (ptr = strtok(NULL, " ")) != NULL )
+         {
+            if ( strcmp(ptr, "PRIVMSG") == 0 )
+            {
+               privmsg = 1;
+               break;
+            }
+         }
+
+         if ( privmsg )
+         {
+            if ( (ptr = strtok(NULL, ":")) != NULL && (ptr = strtok(NULL, "")) != NULL )
+            {
+               strncpy(irc_msg, ptr, 511);
+               irc_msg[511] = '\0';
+            }
+         }
+
+         if ( privmsg == 1 && strlen(irc_nick) > 0 && strlen(irc_msg) > 0 )
+         {
+            irc_log_message(irc, irc_nick, irc_msg);
+            if ( irc_reply_message(irc, irc_nick, irc_msg) < 0 )
+               return -1;
+         }
+      }
+   }
+   return 0;
+}
+
+int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
+{
+   // Checks if someone calls on the bot.
+   if ( *msg != '.' )
+      return 0;
+
+   char *command;
+   char *arg;
+   // Gets command
+   command = strtok(&msg[1], " ");
+   arg = strtok(NULL, "");
+   if ( arg != NULL )
+      while ( *arg == ' ' )
+         arg++;
+
+   if ( command == NULL )
+      return 0;
+
+   if ( strcmp(command, "ping") == 0)
+   {
+      if ( irc_msg(irc->s, irc->channel, "pong") < 0)
+         return -1;
+   }
+   else if ( strcmp(command, "war") == 0 )
+   {
+      if ( irc_msg(irc->s, irc->channel, "WMs again? gtfo.") < 0 )
+         return -1;
+   }
+   else if ( strcmp(command, "smack") == 0 )
+   {
+      char mesg[512];
+      srand(time(NULL));
+      int critical;
+      critical = (rand()%10)/8;
+
+      if ( arg != NULL && strlen(arg) > 0 )
+      {
+         if ( critical )
+            snprintf(mesg, 511, "I smack thee, %s, for %d damage (it's super effective).", arg, rand()%20 + 21);
+         else
+            snprintf(mesg, 511, "I smack thee, %s, for %d damage.", arg, rand()%20 + 1);
+         mesg[511] = '\0';
+      }
+      else
+      {
+         snprintf(mesg, 511, "Behold, I smack thee, %s, for %d damage.", irc_nick, rand()%20 + 1);
+         mesg[511] = '\0';
+      }
+      if ( irc_msg(irc->s, irc->channel, mesg) < 0 )
+         return -1;
+   }
+   else if ( strcmp(command, "google") == 0 )
+   {
+      char mesg[512];
+
+      char t_nick[128];
+      char t_link[256];
+      char link[256] = {0};
+
+      char *t_arg = strtok(arg, " ");
+      if ( t_arg )
+      {
+         strncpy(t_nick, t_arg, 127);
+         t_nick[127] = '\0';
+      }
+      else
+         return 0;
+
+      t_arg = strtok(NULL, "");
+      if ( t_arg )
+      {
+         while ( *t_arg == ' ' )
+            t_arg++;
+
+         strncpy(t_link, t_arg, 255);
+         t_link[255] = '\0';
+      }
+      else
+         return 0;
+
+      t_arg = strtok(t_link, " ");
+      while ( t_arg )
+      {
+         strncpy(&link[strlen(link)], t_arg, 254 - strlen(link));
+
+         t_arg = strtok(NULL, " ");
+         if ( !t_arg )
+            break;
+
+         strncpy(&link[strlen(link)], "%20", 254 - strlen(link));
+      }
+
+
+
+      snprintf(mesg, 511, "%s: http://lmgtfy.com/?q=%s", t_nick, link);
+      mesg[511] = '\0';
+      if ( irc_msg(irc->s, irc->channel, mesg) < 0 )
+         return -1;
+   }
+
+   return 0;
 }

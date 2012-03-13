@@ -79,10 +79,10 @@ int sck_sendf(int s, const char *fmt, ...)
       va_end(args);
 
       // Clamp the chunk
-      if (send_len > 512) 
+      if (send_len > 512)
          send_len = 512;
-   
-      if (sck_send( s, send_buf, send_len ) <= 0) 
+
+      if (sck_send( s, send_buf, send_len ) <= 0)
          return -1;
       return send_len;
    }
