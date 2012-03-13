@@ -41,27 +41,24 @@ int main(int argc, char **argv){
   argc -= optind;
   argv += optind;
 
-  if ( irc_connect(&irc, server, port) < 0 )
-  {
+  if(irc_connect(&irc, server, port) < 0){
     fprintf(stderr, "Connection failed.\n");
     goto exit_err;
   }
 
   irc_set_output(&irc, file);
 
-  if ( irc_login(&irc, nick) < 0 )
-  {
+  if(irc_login(&irc, nick) < 0){
     fprintf(stderr, "Couldn't log in.\n");
     goto exit_err;
   }
 
-  if ( irc_join_channel(&irc, chan) < 0 )
-  {
+  if(irc_join_channel(&irc, chan) < 0){
     fprintf(stderr, "Couldn't join channel.\n");
     goto exit_err;
   }
 
-  while ( irc_handle_data(&irc) >= 0 );
+  while(irc_handle_data(&irc) >= 0);
 
   irc_close(&irc);
   return 0;

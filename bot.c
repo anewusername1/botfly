@@ -27,8 +27,8 @@ int irc_handle_data(irc_t *irc){
         irc->servbuf[irc->bufptr] = '\0';
         irc->bufptr = 0;
 
-        if ( irc_parse_action(irc) < 0 )
-           return -1;
+        if(irc_parse_action(irc) < 0)
+          return -1;
 
         break;
       }
@@ -36,11 +36,11 @@ int irc_handle_data(irc_t *irc){
       default:
       {
         irc->servbuf[irc->bufptr] = tempbuffer[i];
-        if ( irc->bufptr >= (sizeof ( irc->servbuf ) -1 ) )
-           // Overflow!
-           ;
+        if(irc->bufptr >= (sizeof(irc->servbuf) -1))
+          // Overflow!
+          ;
         else
-           irc->bufptr++;
+          irc->bufptr++;
       }
     }
   }
@@ -79,7 +79,7 @@ int irc_parse_action(irc_t *irc){
       return 0;
 
     if(irc->servbuf[0] == ':'){
-      ptr = strtok(irc->servbuf, "!");
+      ptr = strtok(irc->servbuf, ".");
       if ( ptr == NULL ){
         printf("ptr == NULL\n");
         return 0;
@@ -157,9 +157,7 @@ int smack(char *mesg, char *arg, int bufsize){
      else
         snprintf(mesg, bufsize, "I smack thee, %s, for %d damage.", arg, rand()%20 + 1);
      mesg[bufsize] = '\0';
-  }
-  else
-  {
+  } else {
      snprintf(mesg, bufsize, "Smacking thin air..");
      mesg[bufsize] = '\0';
   }
@@ -172,36 +170,33 @@ int google(char *mesg, char *arg, int bufsize){
   char link[256] = {0};
 
   char *t_arg = strtok(arg, " ");
-  if ( t_arg )
-  {
-     strncpy(t_nick, t_arg, 127);
-     t_nick[127] = '\0';
+  if ( t_arg ){
+    strncpy(t_nick, t_arg, 127);
+    t_nick[127] = '\0';
   }
   else
      return 0;
 
   t_arg = strtok(NULL, "");
-  if ( t_arg )
-  {
-     while ( *t_arg == ' ' )
-        t_arg++;
+  if ( t_arg ){
+    while ( *t_arg == ' ' )
+      t_arg++;
 
-     strncpy(t_link, t_arg, 255);
-     t_link[255] = '\0';
+    strncpy(t_link, t_arg, 255);
+    t_link[255] = '\0';
   }
   else
-     return 0;
+    return 0;
 
   t_arg = strtok(t_link, " ");
-  while ( t_arg )
-  {
-     strncpy(&link[strlen(link)], t_arg, 254 - strlen(link));
+  while ( t_arg ){
+    strncpy(&link[strlen(link)], t_arg, 254 - strlen(link));
 
-     t_arg = strtok(NULL, " ");
-     if ( !t_arg )
-        break;
+    t_arg = strtok(NULL, " ");
+    if ( !t_arg )
+      break;
 
-     strncpy(&link[strlen(link)], "%20", 254 - strlen(link));
+    strncpy(&link[strlen(link)], "%20", 254 - strlen(link));
   }
 
   snprintf(mesg, 511, "%s: http://lmgtfy.com/?q=%s", t_nick, link);
