@@ -14,7 +14,7 @@ typedef struct
 } irc_t;
 
 int irc_connect(irc_t *irc, const char* server, const char* port);
-int irc_login(irc_t *irc, const char* nick);
+int irc_login(irc_t *irc);
 int irc_join_channel(irc_t *irc, const char* channel);
 int irc_leave_channel(irc_t *irc);
 int irc_set_output(irc_t *irc, const char* file);

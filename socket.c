@@ -89,3 +89,8 @@ int sck_recv(int s, char* buffer, size_t size){
 
   return rc;
 }
+
+int sck_done(int s){
+  close(s);
+  return 0;
+}

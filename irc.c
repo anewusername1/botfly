@@ -12,8 +12,8 @@ int irc_connect(irc_t *irc, const char* server, const char* port){
   return 0;
 }
 
-int irc_login(irc_t *irc, const char* nick){
-  return irc_reg(irc->s, nick, "arch", "HANSUDESU");
+int irc_login(irc_t *irc){
+  return irc_reg(irc->s, irc->nick, "arch", "HANSUDESU");
 }
 
 int irc_join_channel(irc_t *irc, const char* channel){
@@ -42,10 +42,11 @@ int irc_log_message(irc_t *irc, const char* nick, const char* message){
 
   fprintf(irc->file, "%s - [%s] <%s> %s\n", irc->channel, timestring, nick, message);
   fflush(irc->file);
+  return 0;
 }
 
 void irc_close(irc_t *irc){
-  close(irc->s);
+  sck_done(irc->s);
   fclose(irc->file);
 }
 

@@ -48,10 +48,6 @@ int irc_handle_data(irc_t *irc){
 }
 
 int irc_parse_action(irc_t *irc){
-  char irc_nick[128];
-  char irc_msg[512];
-
-
   if(strncmp(irc->servbuf, "PING :", 6) == 0){
     return irc_pong(irc->s, &irc->servbuf[6]);
   }
@@ -79,7 +75,7 @@ int irc_parse_action(irc_t *irc){
       return 0;
 
     if(irc->servbuf[0] == ':'){
-      ptr = strtok(irc->servbuf, ".");
+      ptr = strtok(irc->servbuf, "!");
       if ( ptr == NULL ){
         printf("ptr == NULL\n");
         return 0;
@@ -115,14 +111,14 @@ int irc_parse_action(irc_t *irc){
 int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
 {
   // Checks if someone calls on the bot.
-  if ( *msg != '.' )
+  if(*msg != '.')
     return 0;
 
   int buffer_size = 512;
   char message[buffer_size];
   char *command;
   char *arg;
-  int retval;
+
   // Gets command
   command = strtok(&msg[1], " ");
   arg = strtok(NULL, "");
@@ -136,9 +132,15 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
   if(strcmp(command, "ping") == 0)
     snprintf(message, buffer_size, "pong");
   else if(strcmp(command, "smack") == 0)
-    smack(message, arg, buffer_size);
+    smack(irc->nick, message, arg, buffer_size, irc_nick);
   else if(strcmp(command, "google") == 0)
     google(message, arg, buffer_size);
+  else if(strcmp(command, "annoybj") == 0)
+    snprintf(message, buffer_size, "zomg bj!!");
+  else if(strcmp(command, "nowai") == 0)
+    snprintf(message, buffer_size, "yawai");
+  else
+    snprintf(message, buffer_size, "no.");
 
   if(irc_msg(irc->s, irc->channel, message) < 0)
     return -1;
@@ -146,17 +148,19 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
   return 0;
 }
 
-int smack(char *mesg, char *arg, int bufsize){
+int smack(char *botnick, char *mesg, char *arg, int bufsize, char *irc_nick){
   srand(time(NULL));
   int critical;
   critical = (rand()%10)/8;
 
   if(arg != NULL && strlen(arg) > 0){
-     if(critical)
-        snprintf(mesg, bufsize, "I smack thee, %s, for %d damage (it's super effective).", arg, rand()%20 + 21);
-     else
-        snprintf(mesg, bufsize, "I smack thee, %s, for %d damage.", arg, rand()%20 + 1);
-     mesg[bufsize] = '\0';
+    if(strcmp(botnick, arg) == 0){
+      snprintf(mesg, bufsize, "Nice try, %s. I smack thee with a rusty pipe for %d damage!", irc_nick, rand()%20 + 41);
+    }else if(critical)
+      snprintf(mesg, bufsize, "I smack thee, %s, for %d damage (it's super effective).", arg, rand()%20 + 21);
+    else
+      snprintf(mesg, bufsize, "I smack thee, %s, for %d damage.", arg, rand()%20 + 1);
+    mesg[bufsize] = '\0';
   } else {
      snprintf(mesg, bufsize, "Smacking thin air..");
      mesg[bufsize] = '\0';
@@ -201,4 +205,5 @@ int google(char *mesg, char *arg, int bufsize){
 
   snprintf(mesg, 511, "%s: http://lmgtfy.com/?q=%s", t_nick, link);
   mesg[bufsize - 1] = '\0';
+  return 0;
 }

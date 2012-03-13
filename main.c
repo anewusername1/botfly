@@ -1,3 +1,4 @@
+#include <string.h>
 #include <unistd.h>
 #include "socket.h"
 #include "bot.h"
@@ -8,17 +9,17 @@ int main(int argc, char **argv){
     usage();
 
   int ch;
-  const char *server, *port, *chan, *nick, *user, *file;
+  const char *server, *port, *chan, *user, *file;
+  irc_t irc;
 
   // defaults
   port = "6667";
-  nick = "botfly";
+  irc.nick = "botfly";
   user = "botfly";
   file = "/dev/stdout";
 
   server = argv[1];
   chan = argv[2];
-  irc_t irc;
 
   while((ch = getopt(argc, argv, "p:n:i:f:")) != -1){
     switch(ch){
@@ -26,7 +27,7 @@ int main(int argc, char **argv){
         port = optarg;
         break;
       case 'n':
-        nick = optarg;
+        irc.nick = optarg;
         break;
       case 'i':
         user = optarg;
@@ -48,7 +49,7 @@ int main(int argc, char **argv){
 
   irc_set_output(&irc, file);
 
-  if(irc_login(&irc, nick) < 0){
+  if(irc_login(&irc) < 0){
     fprintf(stderr, "Couldn't log in.\n");
     goto exit_err;
   }

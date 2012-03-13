@@ -7,7 +7,7 @@ OBJECTS = main.o irc.o bot.o socket.o
 all: $(TARGET)
 
 %.o: %.c
-	$(CC) -g -c -o $@ $<
+	$(CC) -Wall -g -c -o $@ $<
 
 clean: clean-obj clean-bin
 
