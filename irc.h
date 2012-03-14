@@ -31,6 +31,5 @@ int irc_quit(int s, const char *quit_msg);
 int irc_topic(int s, const char *channel, const char *data);
 int irc_action(int s, const char *channel, const char *data);
 int irc_msg(int s, const char *channel, const char *data);
-int irc_me(int s, const char *channel, const char *data);
 
 #endif

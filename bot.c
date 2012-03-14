@@ -118,6 +118,8 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
   char message[buffer_size];
   char *command;
   char *arg;
+  int me = 0;
+  int retval = 0;
 
   // Gets command
   command = strtok(&msg[1], " ");
@@ -129,23 +131,31 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
   if(command == NULL)
     return 0;
 
-  if(strcmp(command, "ping") == 0)
+  if(strcmp(command, "ping") == 0){
     snprintf(message, buffer_size, "pong");
-  else if(strcmp(command, "smack") == 0)
+  }
+  else if(strcmp(command, "smack") == 0){
     smack(irc->nick, message, arg, buffer_size, irc_nick);
-  else if(strcmp(command, "google") == 0)
+    me = 1;
+  }
+  else if(strcmp(command, "google") == 0){
     google(message, arg, buffer_size);
-  else if(strcmp(command, "annoybj") == 0)
+  }
+  else if(strcmp(command, "annoybj") == 0){
     snprintf(message, buffer_size, "zomg bj!!");
-  else if(strcmp(command, "nowai") == 0)
+  }
+  else if(strcmp(command, "nowai") == 0){
     snprintf(message, buffer_size, "yawai");
-  else
+  } else {
     snprintf(message, buffer_size, "no.");
+  }
 
-  if(irc_msg(irc->s, irc->channel, message) < 0)
-    return -1;
+  if(me == 1)
+    retval = irc_action(irc->s, irc->channel, message);
+  else
+    retval = irc_msg(irc->s, irc->channel, message);
 
-  return 0;
+  return retval;
 }
 
 int smack(char *botnick, char *mesg, char *arg, int bufsize, char *irc_nick){
@@ -155,11 +165,11 @@ int smack(char *botnick, char *mesg, char *arg, int bufsize, char *irc_nick){
 
   if(arg != NULL && strlen(arg) > 0){
     if(strcmp(botnick, arg) == 0){
-      snprintf(mesg, bufsize, "Nice try, %s. I smack thee with a rusty pipe for %d damage!", irc_nick, rand()%20 + 41);
+      snprintf(mesg, bufsize, "scoffs then smacks %s with a rusty pipe for %d damage!", irc_nick, rand()%20 + 41);
     }else if(critical)
-      snprintf(mesg, bufsize, "I smack thee, %s, for %d damage (it's super effective).", arg, rand()%20 + 21);
+      snprintf(mesg, bufsize, "smacks %s, for %d damage (it's super effective).", arg, rand()%20 + 21);
     else
-      snprintf(mesg, bufsize, "I smack thee, %s, for %d damage.", arg, rand()%20 + 1);
+      snprintf(mesg, bufsize, "smacks %s, for %d damage.", arg, rand()%20 + 1);
     mesg[bufsize] = '\0';
   } else {
      snprintf(mesg, bufsize, "Smacking thin air..");
