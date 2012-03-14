@@ -147,7 +147,8 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
   else if(strcmp(command, "nowai") == 0){
     snprintf(message, buffer_size, "yawai");
   } else {
-    snprintf(message, buffer_size, "no.");
+    snprintf(message, buffer_size, "yawns");
+    me = 1;
   }
 
   if(me == 1)
