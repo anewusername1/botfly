@@ -103,6 +103,7 @@ int irc_parse_action(irc_t *irc){
 
 int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
 {
+  // TODO: implement action for nowai and when the first word someone says is 'sudo'. We'll make it say "sudo make _yourself_ a sandwich"
   // Checks if someone calls on the bot.
   if(*msg != '.')
     return 0;
