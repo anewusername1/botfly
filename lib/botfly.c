@@ -217,3 +217,6 @@ int google(char *mesg, char *arg, int bufsize){
   mesg[bufsize - 1] = '\0';
   return 0;
 }
+
+// TODO: make botfly respond to private messages. We should be able to tell it to say something in the
+// channel we specify, or do any number of unspecified actions
