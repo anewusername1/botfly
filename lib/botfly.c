@@ -143,6 +143,10 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
   else if(strcmp(command, "annoybj") == 0){
     snprintf(message, buffer_size, "zomg bj!!");
   }
+  else if(strcmp(command, "pet") == 0){
+    snprintf(message, buffer_size, "purrs");
+    me = 1;
+  }
   else if(strcmp(command, "nowai") == 0){
     snprintf(message, buffer_size, "yawai");
   } else {
