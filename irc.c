@@ -4,7 +4,7 @@
 #include <time.h>
 
 int irc_connect(irc_t *irc, const char* server, const char* port){
-  if ( (irc->s =  get_socket(server, port)) < 0 ){
+  if((irc->s = get_socket(server, port)) < 0){
     return -1;
   }
 

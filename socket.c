@@ -19,18 +19,18 @@ int get_socket(const char* host, const char* port){
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
 
-  if ((rc = getaddrinfo(host, port, &hints, &res) ) < 0 ){
+  if((rc = getaddrinfo(host, port, &hints, &res)) < 0){
     fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(rc));
     return -1;
   }
 
   s = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-  if ( s < 0 ){
+  if(s < 0){
     fprintf(stderr, "Couldn't get socket.\n");
     goto error;
   }
 
-  if ( connect(s, res->ai_addr, res->ai_addrlen) < 0 ){
+  if(connect(s, res->ai_addr, res->ai_addrlen) < 0){
     fprintf(stderr, "Couldn't connect.\n");
     goto error;
   }
@@ -48,9 +48,9 @@ int sck_send(int s, const char* data, size_t size){
   size_t written = 0;
   int rc;
 
-  while ( written < size ){
+  while(written < size){
     rc = send(s, data + written, size - written, 0);
-    if ( rc <= 0 )
+    if(rc <= 0)
       return -1;
 
     written += rc;
@@ -70,10 +70,10 @@ int sck_sendf(int s, const char *fmt, ...){
     va_end(args);
 
     // Clamp the chunk
-    if (send_len > 512)
+    if(send_len > 512)
       send_len = 512;
 
-    if (sck_send( s, send_buf, send_len ) <= 0)
+    if(sck_send( s, send_buf, send_len ) <= 0)
       return -1;
     return send_len;
   }
@@ -84,7 +84,7 @@ int sck_recv(int s, char* buffer, size_t size){
   int rc;
 
   rc = recv(s, buffer, size, 0);
-  if ( rc <= 0 )
+  if(rc <= 0)
     return -1;
 
   return rc;
