@@ -95,3 +95,8 @@ int irc_action(int s, const char *channel, const char *data){
 int irc_msg(int s, const char *channel, const char *data){
   return sck_sendf(s, "PRIVMSG %s :%s\r\n", channel, data);
 }
+
+// irc_who: Retrieve nick and host information
+char *irc_who(const char *channel){
+  // TODO: implement /who method to grab nick and host info
+}

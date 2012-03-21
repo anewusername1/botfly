@@ -14,9 +14,11 @@ int main(int argc, char **argv){
 
   // defaults
   port = "6667";
+
+  // TODO: need to pull nick from argv[0]
   irc.nick = "botfly";
   user = "botfly";
-  file = "/dev/stdout";
+  file = stdout;
 
   server = argv[1];
   chan = argv[2];
