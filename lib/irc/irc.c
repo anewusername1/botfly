@@ -1,4 +1,4 @@
-#include "socket.h"
+#include "../net/socket.h"
 #include "irc.h"
 #include <string.h>
 #include <time.h>

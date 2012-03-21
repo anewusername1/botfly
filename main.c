@@ -1,8 +1,8 @@
 #include <string.h>
 #include <unistd.h>
-#include "socket.h"
-#include "bot.h"
-#include "irc.h"
+#include "lib/net/socket.h"
+#include "lib/botfly.h"
+#include "lib/irc/irc.h"
 
 int main(int argc, char **argv){
   if(argc < 2)

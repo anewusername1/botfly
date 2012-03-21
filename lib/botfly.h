@@ -1,7 +1,7 @@
 #ifndef BOT_H
 #define BOT_H
 #include <stdio.h>
-#include "irc.h"
+#include "irc/irc.h"
 
 int irc_handle_data(irc_t *irc);
 int irc_parse_action(irc_t *irc);

@@ -2,7 +2,7 @@ CC = gcc
 
 TARGET = bin/botfly
 
-OBJECTS = main.o irc.o bot.o socket.o
+OBJECTS = main.o lib/irc/irc.o lib/botfly.o lib/net/socket.o
 
 all: $(TARGET)
 

@@ -1,5 +1,5 @@
-#include "bot.h"
-#include "socket.h"
+#include "botfly.h"
+#include "net/socket.h"
 #include <string.h>
 #include <time.h>
 
