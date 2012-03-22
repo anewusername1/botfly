@@ -38,7 +38,7 @@ int get_socket(const char* host, const char* port){
   freeaddrinfo(res);
   return s;
 
-// goto? srsly?
+// TODO: figure out how to get rid of this goto before things get more complex
 error:
   freeaddrinfo(res);
   return -1;

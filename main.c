@@ -4,6 +4,9 @@
 #include "lib/botfly.h"
 #include "lib/irc/irc.h"
 
+void exit_with_error(char *message);
+void usage();
+
 int main(int argc, char **argv){
   if(argc < 2)
     usage();
@@ -18,7 +21,7 @@ int main(int argc, char **argv){
   // TODO: need to pull nick from argv[0]
   irc.nick = "botfly";
   user = "botfly";
-  file = stdout;
+  file = "/dev/stdout";
 
   server = argv[1];
   chan = argv[2];
@@ -44,27 +47,29 @@ int main(int argc, char **argv){
   argc -= optind;
   argv += optind;
 
-  if(irc_connect(&irc, server, port) < 0){
-    fprintf(stderr, "Connection failed.\n");
-    goto exit_err;
-  }
+  if(irc_connect(&irc, server, port) < 0)
+    exit_with_error("Connection failed");
 
   irc_set_output(&irc, file);
 
-  if(irc_login(&irc) < 0){
-    fprintf(stderr, "Couldn't log in.\n");
-    goto exit_err;
-  }
+  if(irc_login(&irc) < 0)
+    exit_with_error("Couldn't log in");
 
-  if(irc_join_channel(&irc, chan) < 0){
-    fprintf(stderr, "Couldn't join channel.\n");
-    goto exit_err;
-  }
+  if(irc_join_channel(&irc, chan) < 0)
+    exit_with_error("Couldn't join channel");
 
   while(irc_handle_data(&irc) >= 0);
 
   irc_close(&irc);
   return 0;
-exit_err:
+}
+
+void usage(){
+  puts("botfly <server> <chan> -p [port] -n <nick> -i <identity> -f <output file>");
+  exit(1);
+}
+
+void exit_with_error(char *message){
+  perror(message);
   exit(1);
 }

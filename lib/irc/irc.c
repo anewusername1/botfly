@@ -97,6 +97,6 @@ int irc_msg(int s, const char *channel, const char *data){
 }
 
 // irc_who: Retrieve nick and host information
-char *irc_who(const char *channel){
-  // TODO: implement /who method to grab nick and host info
+int irc_who(int s, const char *channel){
+  return sck_sendf(s, "WHO %s\r\n", *channel);
 }

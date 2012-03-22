@@ -3,11 +3,6 @@
 #include <string.h>
 #include <time.h>
 
-void usage(){
-  puts("botfly <server> <chan> -p [port] -n <nick> -i <identity> -f <output file>");
-  exit(1);
-}
-
 int irc_handle_data(irc_t *irc){
   char tempbuffer[512];
   int rc, i;
