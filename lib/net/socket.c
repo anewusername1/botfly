@@ -26,12 +26,12 @@ int get_socket(const char* host, const char* port){
 
   s = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
   if(s < 0){
-    fprintf(stderr, "Couldn't get socket.\n");
+    perror("Couldn't get socket");
     goto error;
   }
 
   if(connect(s, res->ai_addr, res->ai_addrlen) < 0){
-    fprintf(stderr, "Couldn't connect.\n");
+    perror("Couldn't connect");
     goto error;
   }
 

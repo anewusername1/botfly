@@ -25,6 +25,7 @@ int main(int argc, char **argv){
 
   server = argv[1];
   chan = argv[2];
+  optind += 2;
 
   while((ch = getopt(argc, argv, "p:n:i:f:")) != -1){
     switch(ch){
@@ -38,14 +39,14 @@ int main(int argc, char **argv){
         user = optarg;
         break;
       case 'f':
-
+        file = optarg;
+        break;
       case '?':
+        break;
       default:
         usage();
     }
   }
-  argc -= optind;
-  argv += optind;
 
   if(irc_connect(&irc, server, port) < 0)
     exit_with_error("Connection failed");

@@ -8,7 +8,8 @@ int irc_handle_data(irc_t *irc){
   int rc, i;
 
   if((rc = sck_recv(irc->s, tempbuffer, sizeof(tempbuffer) - 2 )) <= 0){
-    fprintf(stderr, ":v\n");
+    fprintf(stderr, "buffer == %s\n", tempbuffer);
+    perror("Timeout");
     return -1;
   }
 
