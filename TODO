@@ -1,3 +1,5 @@
 implement Ruby interpreter to give us the ability to create plugins from ruby
 
 Allow adding/removing commands at runtime via a 'commands' file. Only to work for simple message/response types of commands.
+
+Make the IRC implementation parse returned data and take action if it gets an error
