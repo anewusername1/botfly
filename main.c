@@ -19,8 +19,8 @@ int main(int argc, char **argv){
   port = "6667";
 
   // TODO: need to pull nick from argv[0]
-  irc.nick = "botfly";
-  user = "botfly";
+  irc.nick = "critter";
+  user = "botfly 1.0";
   file = "/dev/stdout";
 
   server = argv[1];
