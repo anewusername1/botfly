@@ -93,7 +93,13 @@ int irc_action(int s, const char *channel, const char *data){
 
 // irc_msg: For sending a channel message or a query
 int irc_msg(int s, const char *channel, const char *data){
-  return sck_sendf(s, "PRIVMSG %s :%s\r\n", channel, data);
+  char *sep = "\n";
+  char *line, *lasts;
+  char *temp_str = strdup(data);
+  for(line = strtok_r(temp_str, sep, &lasts); line; strtok_r(NULL, sep, &lasts))
+    if(sck_sendf(s, "PRIVMSG %s :%s\r\n", channel, line) < 0)
+      return -1;
+  return 0;
 }
 
 // irc_who: Retrieve nick and host information
