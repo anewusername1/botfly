@@ -8,6 +8,7 @@ int irc_parse_action(irc_t *irc);
 int irc_reply_message(irc_t *irc, char *nick, char* msg);
 int smack(char *botnick, char *mesg, char *arg, int bufzise, char *irc_nick);
 int google(char *mesg, char *arg, int bufzise);
+const char *roflcopter();
 
 typedef struct{
   int hp;

@@ -136,6 +136,10 @@ int irc_reply_message(irc_t *irc, char *irc_nick, char *msg)
   else if(strcmp(command, "google") == 0){
     google(message, arg, buffer_size);
   }
+  else if(strcmp(command, "roflcopter") == 0){
+    snprintf(message, buffer_size, "%s", roflcopter());
+    /* roflcopter(message, arg, buffer_size); */
+  }
   else if(strcmp(command, "annoybj") == 0){
     snprintf(message, buffer_size, "zomg bj!!");
   }
@@ -216,6 +220,17 @@ int google(char *mesg, char *arg, int bufsize){
   snprintf(mesg, 511, "%s: http://lmgtfy.com/?q=%s", t_nick, link);
   mesg[bufsize - 1] = '\0';
   return 0;
+}
+
+const char* roflcopter(){
+  const char *data = "  ROFL:ROFL:LOL:ROFL:ROFL\n"
+         "       ______|_____      \n"
+         " L    /            \\     \n"
+         "LOL===            []\\    \n"
+         " L    \\______________\\   \n"
+         "         |     |         \n"
+         "       -------------/    \n";
+  return data;
 }
 
 // TODO: make botfly respond to private messages. We should be able to tell it to say something in the
